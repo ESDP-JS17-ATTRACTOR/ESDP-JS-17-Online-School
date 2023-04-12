@@ -1,6 +1,7 @@
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
+import { Exclude } from 'class-transformer';
 
 const SALT_WORK_FACTOR = 10;
 
@@ -24,6 +25,7 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   country: string;
 
+  @Exclude()
   @Column({ type: 'varchar', length: 255 })
   password: string;
 
@@ -44,8 +46,8 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: true })
   googleId: string;
 
-  @Column({ type: 'boolean', nullable: true })
-  status: false;
+  @Column({ type: 'boolean', default: false })
+  status: boolean;
 
   async generateToken() {
     this.token = crypto.randomUUID();
