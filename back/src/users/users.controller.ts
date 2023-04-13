@@ -1,15 +1,21 @@
-import { Controller, NotFoundException, Post, Req } from '@nestjs/common';
+import {
+  Controller,
+  NotFoundException,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UsersController {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
   @Post('register')
@@ -48,5 +54,11 @@ export class UsersController {
       await this.userRepository.save(user);
     }
     return plainToClass(User, user);
+  }
+
+  @Post('sessions')
+  @UseGuards(AuthGuard('local'))
+  async login(@Req() req) {
+    return req.user as User;
   }
 }
