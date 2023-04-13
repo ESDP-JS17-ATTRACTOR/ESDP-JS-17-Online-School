@@ -2,6 +2,7 @@ import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { Exclude } from 'class-transformer';
+import { IsEmail, IsString } from 'class-validator';
 
 const SALT_WORK_FACTOR = 10;
 
@@ -11,9 +12,11 @@ export class User {
   id: number;
 
   @Column({ type: 'varchar', length: 255, unique: true })
+  @IsEmail({}, { message: 'Invalid e-mail' })
   email: string;
 
   @Column({ type: 'varchar', length: 255 })
+  @IsString({ message: 'something' })
   firstName: string;
 
   @Column({ type: 'varchar', length: 255 })

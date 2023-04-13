@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 
 @Controller('users')
 export class UsersController {
@@ -33,7 +34,19 @@ export class UsersController {
       avatar: req.body.avatar,
     });
     await user.generateToken();
-    await this.userRepository.save(user);
+    const errors = await validate(user);
+
+    if (errors.length > 0) {
+      return errors.map((error) => {
+        return {
+          value: error.value,
+          property: error.property,
+          message: Object.values(error.constraints)[0],
+        };
+      });
+    } else {
+      await this.userRepository.save(user);
+    }
     return plainToClass(User, user);
   }
 }
