@@ -31,6 +31,7 @@ export class UsersController {
   }
 
   @Post('sessions')
+  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(AuthGuard('local'))
   async login(@Req() req) {
     return req.user as User;
