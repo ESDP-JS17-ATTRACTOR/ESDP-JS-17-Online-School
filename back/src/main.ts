@@ -8,9 +8,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      exceptionFactory: (validationErrors: ValidationError[] = []) => {
+      exceptionFactory: (validationErrors = []) => {
         // need types
-        const errors: any = {}; // need types
+        const errors = {}; // need types
 
         validationErrors.forEach((error) => {
           const constraints = error.constraints;

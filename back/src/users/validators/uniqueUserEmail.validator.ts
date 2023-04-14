@@ -5,21 +5,16 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { User } from '../../entities/user.entity';
+import { UsersService } from '../users.service';
+import { ModuleRef } from '@nestjs/core';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class UniqueUserEmailConstraint implements ValidatorConstraintInterface {
-  constructor(private readonly userRepository: Repository<User>) {}
+  constructor(private readonly usersService: UsersService) {}
 
-  async validate(email: string) {
-    const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-    });
-
+  async validate(email: string): Promise<boolean> {
+    const user = await this.usersService.findByEmail(email);
     return !user;
   }
 
@@ -30,7 +25,10 @@ export class UniqueUserEmailConstraint implements ValidatorConstraintInterface {
 
 export function UniqueUserEmail(validationOptions?: ValidationOptions) {
   return function (
-    object: { constructor: CallableFunction },
+    object: {
+      constructor: CallableFunction;
+      context?: { userModuleRef: ModuleRef };
+    },
     propertyName: string,
   ) {
     registerDecorator({
@@ -38,7 +36,10 @@ export function UniqueUserEmail(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],
-      validator: UniqueUserEmailConstraint,
+      validator: async (email: string) =>
+        await new UniqueUserEmailConstraint(
+          object.context.userModuleRef.get(UsersService),
+        ).validate(email),
     });
   };
 }
