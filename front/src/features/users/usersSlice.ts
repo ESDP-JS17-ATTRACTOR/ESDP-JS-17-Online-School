@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {GlobalError, User} from "../../../types";
-import {register} from "./usersThunks";
+import {googleLogin, login, register} from "./usersThunks";
 import {RootState} from "../../../store";
 
 interface UserState {
@@ -20,29 +20,42 @@ const initialState: UserState = {
 }
 
 const usersSlice = createSlice({
-  name: 'users',
-  initialState,
-  reducers: {
-    unsetUser: (state) => {
-      state.user = null;
-    }
-  },
-  extraReducers: (builder) => {
+    name: 'users',
+    initialState,
+    reducers: {
+        unsetUser: (state) => {
+            state.user = null;
+        }
+    },
+    extraReducers: (builder) => {
 
-    // builder.addCase(login.pending, (state) => {
-    //   state.loginLoading = true;
-    //   state.loginError = null;
-    // });
-    // builder.addCase(login.fulfilled, (state, {payload: user}) => {
-    //   state.loginLoading = false;
-    //   state.user = user;
-    // });
-    // builder.addCase(login.rejected, (state, {payload: error}) => {
-    //   state.loginLoading = false;
-    //   state.loginError = null;
-    // });
+        builder.addCase(login.pending, (state) => {
+            state.loginLoading = true;
+            state.loginError = null;
+        });
+        builder.addCase(login.fulfilled, (state, {payload: user}) => {
+            state.loginLoading = false;
+            state.user = user;
+        });
+        builder.addCase(login.rejected, (state, {payload: error}) => {
+            state.loginLoading = false;
+            state.loginError = error || null;
+        });
 
-    builder.addCase(register.pending, (state) => {
+        builder.addCase(googleLogin.pending, (state) => {
+            state.loginLoading = true;
+            state.loginError = null;
+        });
+        builder.addCase(googleLogin.fulfilled, (state, {payload: user}) => {
+            state.loginLoading = false;
+            state.user = user;
+        });
+        builder.addCase(googleLogin.rejected, (state, {payload: error}) => {
+            state.loginLoading = false;
+            state.loginError = error || null;
+        });
+        
+       builder.addCase(register.pending, (state) => {
       state.registerLoading = true;
       state.registerError = null;
     });
@@ -54,7 +67,7 @@ const usersSlice = createSlice({
       state.registerLoading = false;
       state.registerError = null;
     });
-  }
+    }
 });
 
 export const usersReducer = usersSlice.reducer;
