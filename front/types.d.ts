@@ -1,3 +1,4 @@
+
 export interface LoginMutation {
     email: string;
     password: string;
@@ -20,4 +21,26 @@ export interface User {
 export interface UserResponse {
     message: string;
     user: User
+
+export interface RegisterMutation {
+  email: string;
+  firstName: string;
+  lastName: string;
+  country: string;
+  phoneNumber: string;
+  password: string;
+}
+
+export interface User {
+  email: string;
+  firstName: string;
+  lastName: string;
+  country: string;
+  phoneNumber: string;
+  password: string;
+  token: string;
+}
+
+export interface GlobalError {
+  error: string
 }

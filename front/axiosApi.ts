@@ -13,4 +13,5 @@ export const addInterceptors = (store: Store<RootState>) => {
         return config;
     });
 };
+
 export default axiosApi;
